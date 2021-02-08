@@ -348,3 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+src/Octoller.BotBox/Octoller.BotBox.Web/privatesettings.json
