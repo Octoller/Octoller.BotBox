@@ -2,11 +2,24 @@
 
 namespace Octoller.BotBox.Web.Logging {
 
+    /// <summary>
+    /// Предоставляет набор объектов структуры EventId для событий логирования
+    /// </summary>
     public static class LogsHelper {
 
-        public static readonly EventId ConectedVkId = new EventId(
-            id: LogEventsId.ConectedVk,
-            name: "ConectedVk");
+        /// <summary>
+        /// Указывает на успешное подключение к сервису
+        /// </summary>
+        public static readonly EventId ConectedSuccess = new EventId(
+            id: LogEventsId.ConectedSuccess,
+            name: "ConectedSuccess");
+
+        /// <summary>
+        /// Указывает на неудачное подключение к сервису
+        /// </summary>
+        public static readonly EventId ConectedFailed = new EventId(
+            id: LogEventsId.ConectedFailed,
+            name: "ConectedFailed");
 
     }
 }

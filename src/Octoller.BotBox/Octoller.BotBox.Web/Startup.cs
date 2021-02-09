@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Octoller.BotBox.Web.Kernel.Extension;
 
 namespace Octoller.BotBox.Web {
 
@@ -16,6 +18,23 @@ namespace Octoller.BotBox.Web {
         }
 
         public void ConfigureServices(IServiceCollection services) {
+
+            services.AddDbContext<Data.ApplicationDbContext>(options => {
+                options.UseSqlServer(this.configuration["ConnectionStrings:DbConnection"]);
+            });
+
+            services.AddIdentity<Models.User, Models.Role>(options => {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.User.RequireUniqueEmail = true;
+            })
+            .AddEntityFrameworkStores<Data.ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
+            services.AddAuthentication()
+                .AddVkAuthentication(configuration);
+
+            services.AddAuthorization();
 
         }
 
