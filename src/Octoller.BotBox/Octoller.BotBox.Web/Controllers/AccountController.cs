@@ -6,7 +6,6 @@ using Octoller.BotBox.Web.ViewModels;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication;
-using System.Collections;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -120,6 +119,7 @@ namespace Octoller.BotBox.Web.Controllers {
                     await signInManager.SignInAsync(user, false);
 
                     return Redirect(registerData.ReturnUrl);
+
                 } else {
 
                     foreach (IdentityError error in resultCreate.Errors) {
@@ -133,7 +133,6 @@ namespace Octoller.BotBox.Web.Controllers {
         }
 
         [HttpGet]
-        [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string returnUrl, string providerName) {
 
             returnUrl ??= Url.Action("Index", "Home");
@@ -147,7 +146,6 @@ namespace Octoller.BotBox.Web.Controllers {
         }
 
         [HttpGet]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl) {
 
             ExternalLoginInfo loginInfo = await this.signInManager
@@ -164,7 +162,9 @@ namespace Octoller.BotBox.Web.Controllers {
                 bypassTwoFactor: false);
 
             if (result.Succeeded) {
-                Redirect(returnUrl);
+
+                return Redirect(returnUrl);
+
             } else {
 
                 string userEmail = loginInfo.Principal.Claims

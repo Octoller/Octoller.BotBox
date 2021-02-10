@@ -23,7 +23,7 @@ namespace Octoller.BotBox.Web {
                 options.UseSqlServer(this.configuration["ConnectionStrings:DbConnection"]);
             });
 
-            services.AddIdentity<Models.User, Models.Role>(options => {
+            services.AddIdentity<Models.User, IdentityRole>(options => {
                 options.Password.RequiredLength = 6;
                 options.Password.RequireNonAlphanumeric = false;
                 options.User.RequireUniqueEmail = true;
@@ -35,6 +35,8 @@ namespace Octoller.BotBox.Web {
                 .AddVkAuthentication(configuration);
 
             services.AddAuthorization();
+
+            services.AddControllersWithViews();
 
         }
 

@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 
 src/Octoller.BotBox/Octoller.BotBox.Web/privatesettings.json
+/trash

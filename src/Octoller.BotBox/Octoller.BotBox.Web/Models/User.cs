@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
 
 namespace Octoller.BotBox.Web.Models {
 
-    public class User : IdentityUser<Guid> {
-        
+    public class User : IdentityUser {
+
+        public Account Account {
+            get; set;
+        }
+
+        public Community Community {
+            get; set;
+        }
     }
 }

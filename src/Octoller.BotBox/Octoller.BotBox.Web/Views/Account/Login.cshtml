@@ -1,0 +1,47 @@
+﻿@model LoginModel
+
+@{
+    Layout = "_AccountLayout";
+    ViewData["Title"] = "Вход";
+}
+
+<!-- Вкладки навигации -->
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" asp-action="Login" asp-controller="Account">Войти</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-action="Register" asp-controller="Account">Создать аккаунт</a>
+    </li>
+</ul>
+<hr />
+
+<!-- Кнопки авторизации через сторонние сервисы -->
+@foreach(var provider in Model.Providers) {
+    <a class="navbar-item btn btn-outline-primary btn-block" asp-action="ExternalLogin"
+       asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl" 
+       asp-route-providerName="@provider.Name">@provider.DisplayName</a>
+}
+<hr />
+
+<!-- Форма входа -->
+<form method="post" asp-action="Login" asp-controller="Account" asp-antiforgery="true">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+    <div class="form-group">
+        <label asp-for="Email" class="sr-only">Email:</label>
+        <input placeholder="Email" class="form-control" type="email" asp-for="Email" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="sr-only">Пароль:</label>
+        <input placeholder="Пароль" class="form-control" type="password" asp-for="Password" />
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" id="dropdownCheck" type="checkbox" asp-for="IsPersistent" />
+        <label class="form-check-label" for="dropdownCheck" asp-for="IsPersistent">Запомнить меня</label>
+    </div>
+    <hr />
+    <div class="form-group">
+        <input type="submit" value="Войти" class="btn btn-outline-primary btn-block" />
+    </div>
+</form>

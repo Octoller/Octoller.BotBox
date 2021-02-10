@@ -1,0 +1,41 @@
+﻿@model HeaderInfo;
+
+<!-- Шапка сайта -->
+<header class="header">
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+
+        <!-- Логотип -->
+        <a class="navbar-brand" asp-action="Index" asp-controller="Home">BotBox</a>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+
+                <!-- Навигация -->>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="">Новости</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="">Документация</a>
+                </li>
+                @if (Model.IsAuthenticated) {
+                    <!-- Выпадающее меню -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="Preview" href="#"
+                           role="button" aria-haspopup="true" aria-expanded="false">@Model.ShowName</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="Просмотр">
+                            <a href="#" class="dropdown-item disabled">Ваш рофиль</a>
+                            <a href="#" class="dropdown-item disabled">Ваши сообщества</a>
+                            <a href="#" class="dropdown-item disabled">Упарвление ботами</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Выйти</a>
+                        </div>
+                    </li>
+                } else {
+                    <!-- Кнопка входа -->
+                    <li class="nav-item">
+                        <a class="navbar-item btn btn-outline-primary" asp-action="Login" asp-controller="Account">Войти</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+</header>
