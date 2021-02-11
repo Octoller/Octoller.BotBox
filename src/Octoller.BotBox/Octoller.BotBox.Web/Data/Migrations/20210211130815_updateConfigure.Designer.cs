@@ -10,7 +10,7 @@ using Octoller.BotBox.Web.Data;
 namespace Octoller.BotBox.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210211130017_updateConfigure")]
+    [Migration("20210211130815_updateConfigure")]
     partial class updateConfigure
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -259,9 +259,7 @@ namespace Octoller.BotBox.Web.Data.Migrations
 
                     b.HasIndex("Name");
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Communities");
                 });
@@ -394,8 +392,8 @@ namespace Octoller.BotBox.Web.Data.Migrations
             modelBuilder.Entity("Octoller.BotBox.Web.Models.Community", b =>
                 {
                     b.HasOne("Octoller.BotBox.Web.Models.User", "User")
-                        .WithOne("Community")
-                        .HasForeignKey("Octoller.BotBox.Web.Models.Community", "UserId");
+                        .WithMany("Communities")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -404,7 +402,7 @@ namespace Octoller.BotBox.Web.Data.Migrations
                 {
                     b.Navigation("Account");
 
-                    b.Navigation("Community");
+                    b.Navigation("Communities");
                 });
 #pragma warning restore 612, 618
         }

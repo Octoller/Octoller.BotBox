@@ -25,7 +25,7 @@ namespace Octoller.BotBox.Web.Data.Configurations {
 
             builder.HasIndex(c => c.Name);
 
-            builder.HasOne(c => c.User).WithOne(u => u.Community);
+            builder.HasOne(c => c.User).WithMany(u => u.Communities);
 
         }
     }

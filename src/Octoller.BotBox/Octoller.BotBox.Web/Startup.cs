@@ -36,6 +36,8 @@ namespace Octoller.BotBox.Web {
 
             services.AddAuthorization();
 
+            services.AddVkProviderProcessor();
+
             services.AddControllersWithViews();
 
         }

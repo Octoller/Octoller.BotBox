@@ -267,9 +267,7 @@ namespace Octoller.BotBox.Web.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Communities_UserId",
                 table: "Communities",
-                column: "UserId",
-                unique: true,
-                filter: "[UserId] IS NOT NULL");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
