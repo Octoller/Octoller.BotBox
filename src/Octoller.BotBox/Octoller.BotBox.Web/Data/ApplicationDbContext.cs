@@ -5,14 +5,6 @@ using Octoller.BotBox.Web.Models;
 namespace Octoller.BotBox.Web.Data {
 
     public class ApplicationDbContext : IdentityDbContext<User> {
-        
-        public DbSet<Account> Accounts {
-            get; set;
-        }
-
-        public DbSet<Community> Communities {
-            get; set;
-        }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) {
@@ -20,7 +12,9 @@ namespace Octoller.BotBox.Web.Data {
         }
 
         protected override void OnModelCreating(ModelBuilder builder) {
-            
+
+            builder.ApplyConfigurationsFromAssembly(typeof(Startup).Assembly);
+
             base.OnModelCreating(builder);
 
 
