@@ -8,6 +8,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Octoller.BotBox.Web.Kernel.Processor;
+using Octoller.BotBox.Web.Kernel;
 
 namespace Octoller.BotBox.Web.Controllers {
 
@@ -15,14 +17,17 @@ namespace Octoller.BotBox.Web.Controllers {
 
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
+        private readonly VkProviderProcessor vkProvider;
         private readonly ILogger<AccountController> logger;
 
         public AccountController(UserManager<User> userManager,
             SignInManager<User> signInManager,
+            VkProviderProcessor vkProvider,
             ILogger<AccountController> logger) {
 
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.vkProvider = vkProvider;
             this.logger = logger;
         }
 
@@ -37,7 +42,7 @@ namespace Octoller.BotBox.Web.Controllers {
             IEnumerable<AuthenticationScheme> providers = await this.signInManager
                 .GetExternalAuthenticationSchemesAsync();
 
-            return View(new LoginModel {
+            return View(new LoginViewModel {
                 ReturnUrl = returnUrl ?? Url.Action("Index", "Home"),
                 Providers = providers
             });
@@ -45,7 +50,7 @@ namespace Octoller.BotBox.Web.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel loginData) {
+        public async Task<IActionResult> Login(LoginViewModel loginData) {
 
             if (User.Identity.IsAuthenticated) {
                 return Redirect(loginData.ReturnUrl);
@@ -65,7 +70,6 @@ namespace Octoller.BotBox.Web.Controllers {
                     }
 
                 } else {
-
                     ModelState.AddModelError(string.Empty, "User not found");
                 }
             } 
@@ -88,7 +92,7 @@ namespace Octoller.BotBox.Web.Controllers {
             IEnumerable<AuthenticationScheme> providers = await this.signInManager
                 .GetExternalAuthenticationSchemesAsync();
 
-            return View(new RegisterModel {
+            return View(new RegisterViewModel {
                 ReturnUrl = returnUrl ?? Url.Action("Index", "Home"),
                 Providers = providers
             });
@@ -96,7 +100,7 @@ namespace Octoller.BotBox.Web.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterModel registerData) {
+        public async Task<IActionResult> Register(RegisterViewModel registerData) {
 
             if (User.Identity.IsAuthenticated) {
                 return Redirect(registerData.ReturnUrl);
@@ -137,7 +141,9 @@ namespace Octoller.BotBox.Web.Controllers {
 
             returnUrl ??= Url.Action("Index", "Home");
 
-            string redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
+            string redirectUrl = Url.Action("ExternalLoginCallback", "Account", new {
+                returnUrl
+            });
 
             AuthenticationProperties properties = this.signInManager
                 .ConfigureExternalAuthenticationProperties(providerName, redirectUrl);
@@ -184,17 +190,27 @@ namespace Octoller.BotBox.Web.Controllers {
                     user = await this.userManager.FindByEmailAsync(userEmail);
                 }
 
-                ///TODO: здесь нужно будет подключиться к API VK и создать запись в базе с полученными данными
+                IdentityResult createAccountResult = await this.vkProvider
+                    .CreateVkAccountAsync(user.Id, userEmail, loginInfo);
 
-                IdentityResult addLoginInfoResult = await this.userManager
-                    .AddLoginAsync(user, loginInfo);
+                if (createAccountResult.Succeeded) {
 
-                if (addLoginInfoResult.Succeeded) {
+                    IdentityResult addRoleResult = await this.userManager
+                        .AddToRoleAsync(user, AppData.RolesData.UserRoleName);
 
-                    await this.signInManager.SignOutAsync();
-                    await this.signInManager.SignInAsync(user, true);
+                    if (addRoleResult.Succeeded) {
 
-                    return Redirect(returnUrl);
+                        IdentityResult addLoginInfoResult = await this.userManager
+                            .AddLoginAsync(user, loginInfo);
+
+                        if (addLoginInfoResult.Succeeded) {
+
+                            await this.signInManager.SignOutAsync();
+                            await this.signInManager.SignInAsync(user, true);
+
+                            return Redirect(returnUrl);
+                        }
+                    }
                 }
             }
 

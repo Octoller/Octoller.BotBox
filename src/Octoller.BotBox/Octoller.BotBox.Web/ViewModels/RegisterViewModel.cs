@@ -2,7 +2,7 @@
 
 namespace Octoller.BotBox.Web.ViewModels {
 
-    public class RegisterModel : ExternalProviderModel {
+    public class RegisterViewModel : ExternalProviderViewModel {
 
         public string ReturnUrl {
             get; set;

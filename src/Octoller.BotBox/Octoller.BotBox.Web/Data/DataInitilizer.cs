@@ -43,8 +43,10 @@ namespace Octoller.BotBox.Web.Data {
                     });
 
                     if (!createRoleResult.Succeeded) {
+
                         string message = string.Join(" | ",
                             createRoleResult.Errors.Select(x => $"{x.Code}: {x.Description}"));
+
                         throw new Exception(message);
                     }
                 }

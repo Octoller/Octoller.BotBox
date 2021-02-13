@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Octoller.BotBox.Web.ViewModels {
 
-    public class ExternalProviderModel {
+    public class ExternalProviderViewModel {
         
         //Коллекция имен на случай, если будет несколько провайдеров аутентификации
 

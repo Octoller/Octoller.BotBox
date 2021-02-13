@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Octoller.BotBox.Web.Kernel;
 using Octoller.BotBox.Web.Kernel.Extension;
 
 namespace Octoller.BotBox.Web {
@@ -18,6 +19,7 @@ namespace Octoller.BotBox.Web {
         }
 
         public void ConfigureServices(IServiceCollection services) {
+
 
             services.AddDbContext<Data.ApplicationDbContext>(options => {
                 options.UseSqlServer(this.configuration["ConnectionStrings:DbConnection"]);
@@ -34,12 +36,22 @@ namespace Octoller.BotBox.Web {
             services.AddAuthentication()
                 .AddVkAuthentication(configuration);
 
-            services.AddAuthorization();
+            services.AddAuthorization(options => {
+
+                options.AddPolicy("Users", policy => {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(AppData.RolesData.Roles);
+                });
+
+                options.AddPolicy("Administration", policy => {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(AppData.RolesData.AdministratorRoleName);
+                });
+            });
 
             services.AddVkProviderProcessor();
 
             services.AddControllersWithViews();
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
