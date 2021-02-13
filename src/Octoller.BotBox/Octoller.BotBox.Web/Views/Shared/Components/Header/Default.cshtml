@@ -23,7 +23,7 @@
                            role="button" aria-haspopup="true" aria-expanded="false">@Model.ShowName</a>
                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-dark" aria-labelledby="Просмотр">
                             <a asp-action="Index" asp-controller="Profile" class="dropdown-item">Ваш рофиль</a>
-                            <a href="#" class="dropdown-item disabled">Ваши сообщества</a>
+                            <a asp-action="Index" asp-controller="Community" class="dropdown-item">Ваши сообщества</a>
                             <a href="#" class="dropdown-item disabled">Упарвление ботами</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Выйти</a>
