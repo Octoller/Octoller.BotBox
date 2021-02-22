@@ -17,26 +17,23 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <form>
-                        <div class="list-group">
-                            @foreach (var g in Model) {
-                                
-                                <div class="form-control list-group-item list-group-item-action list-group-item-light">
-                                    <div class="input-group mb-auto">
-                                        <div class="input-group-text">
-                                            <input class="form-check mt-0" type="checkbox" value="" aria-label="Флажок">
-                                        </div>
-                                        <div class="media">
-                                            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(g.Photo))" class="rounded-circle img-circle-community" alt="@g.Name">
-                                            <div class="media-body">
-                                                <h5>@g.Name</h5>
-                                            </div>
-                                        </div>
+                    @foreach (var g in Model) {
+                        <form method="post" asp-action="LinkCommunity" asp-controller="Community" asp-route-id="@g.Id" asp-antiforgery="true">
+                                <div class="media">
+                                    <img src="data:image/jpeg;base64,@(Convert.ToBase64String(g.Photo))"
+                                            class="rounded-circle img-circle-community" alt="@g.Name">
+                                    <div class="media-body">
+                                        <h5>@g.Name</h5>
                                     </div>
                                 </div>
+
+                            @if (g.Connected) {
+                                <input type="submit" class="btn btn-danger" value="Отключить">
+                            } else {
+                                <input type="submit" class="btn btn-outline-success" value="Подключить">
                             }
-                        </div>
-                    </form>
+                        </form>
+                    }
                 </div>
             </div>
         </div>

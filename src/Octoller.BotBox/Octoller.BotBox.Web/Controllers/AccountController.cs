@@ -8,13 +8,13 @@ using System.Linq;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Octoller.BotBox.Web.Kernel.Processor;
+using Octoller.BotBox.Web.Kernel.Services;
 using Octoller.BotBox.Web.Kernel;
 
-namespace Octoller.BotBox.Web.Controllers {
-
-    public class AccountController : Controller {
-
+namespace Octoller.BotBox.Web.Controllers 
+{
+    public class AccountController : Controller 
+    {
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
         private readonly VkProviderProcessor vkProvider;
@@ -23,8 +23,8 @@ namespace Octoller.BotBox.Web.Controllers {
         public AccountController(UserManager<User> userManager,
             SignInManager<User> signInManager,
             VkProviderProcessor vkProvider,
-            ILogger<AccountController> logger) {
-
+            ILogger<AccountController> logger) 
+        {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.vkProvider = vkProvider;
@@ -32,9 +32,10 @@ namespace Octoller.BotBox.Web.Controllers {
         }
 
         [HttpGet]
-        public async Task<IActionResult> Login(string returnUrl) {
-
-            if (User.Identity.IsAuthenticated) {
+        public async Task<IActionResult> Login(string returnUrl) 
+        {
+            if (User.Identity.IsAuthenticated) 
+            {
                 return Redirect(returnUrl);
             }
 
@@ -42,7 +43,8 @@ namespace Octoller.BotBox.Web.Controllers {
             IEnumerable<AuthenticationScheme> providers = await this.signInManager
                 .GetExternalAuthenticationSchemesAsync();
 
-            return View(new LoginViewModel {
+            return View(new LoginViewModel 
+            {
                 ReturnUrl = returnUrl ?? Url.Action("Index", "Home"),
                 Providers = providers
             });
@@ -50,26 +52,29 @@ namespace Octoller.BotBox.Web.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel loginData) {
-
-            if (User.Identity.IsAuthenticated) {
+        public async Task<IActionResult> Login(LoginViewModel loginData) 
+        {
+            if (User.Identity.IsAuthenticated) 
+            {
                 return Redirect(loginData.ReturnUrl);
             }
 
-            if (ModelState.IsValid) {
-
+            if (ModelState.IsValid) 
+            {
                 User user = await this.userManager.FindByEmailAsync(loginData.Email);
 
-                if (user is not null) {
-
+                if (user != null) 
+                {
                     Microsoft.AspNetCore.Identity.SignInResult signInResult = await this.signInManager
                         .PasswordSignInAsync(user, loginData.Password, loginData.IsPersistent, false);
 
-                    if (signInResult.Succeeded) {
+                    if (signInResult.Succeeded) 
+                    {
                         return Redirect(loginData.ReturnUrl);
                     }
-
-                } else {
+                } 
+                else 
+                {
                     ModelState.AddModelError(string.Empty, "User not found");
                 }
             } 
@@ -82,9 +87,10 @@ namespace Octoller.BotBox.Web.Controllers {
         }
 
         [HttpGet]
-        public async Task<IActionResult> Register(string returnUrl) {
-
-            if (User.Identity.IsAuthenticated) {
+        public async Task<IActionResult> Register(string returnUrl) 
+        {
+            if (User.Identity.IsAuthenticated) 
+            {
                 return Redirect(returnUrl);
             }
 
@@ -92,7 +98,8 @@ namespace Octoller.BotBox.Web.Controllers {
             IEnumerable<AuthenticationScheme> providers = await this.signInManager
                 .GetExternalAuthenticationSchemesAsync();
 
-            return View(new RegisterViewModel {
+            return View(new RegisterViewModel 
+            {
                 ReturnUrl = returnUrl ?? Url.Action("Index", "Home"),
                 Providers = providers
             });
@@ -100,15 +107,17 @@ namespace Octoller.BotBox.Web.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel registerData) {
-
-            if (User.Identity.IsAuthenticated) {
+        public async Task<IActionResult> Register(RegisterViewModel registerData) 
+        {
+            if (User.Identity.IsAuthenticated) 
+            {
                 return Redirect(registerData.ReturnUrl);
             }
 
-            if (ModelState.IsValid) {
-
-                User user = new User {
+            if (ModelState.IsValid) 
+            {
+                User user = new User 
+                {
                     UserName = registerData.Email,
                     Email = registerData.Email
                 };
@@ -117,17 +126,17 @@ namespace Octoller.BotBox.Web.Controllers {
                 IdentityResult resultCreate = await this.userManager
                     .CreateAsync(user, registerData.Password);
 
-                if (resultCreate.Succeeded) {
-
+                if (resultCreate.Succeeded) 
+                {
                     // устанавливаем куки аутентификации
                     await signInManager.SignInAsync(user, false);
 
                     return Redirect(registerData.ReturnUrl);
-
-                } else {
-
-                    foreach (IdentityError error in resultCreate.Errors) {
-
+                } 
+                else 
+                {
+                    foreach (IdentityError error in resultCreate.Errors) 
+                    {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
@@ -137,11 +146,12 @@ namespace Octoller.BotBox.Web.Controllers {
         }
 
         [HttpGet]
-        public IActionResult ExternalLogin(string returnUrl, string providerName) {
-
+        public IActionResult ExternalLogin(string returnUrl, string providerName) 
+        {
             returnUrl ??= Url.Action("Index", "Home");
 
-            string redirectUrl = Url.Action("ExternalLoginCallback", "Account", new {
+            string redirectUrl = Url.Action("ExternalLoginCallback", "Account", new 
+            {
                 returnUrl
             });
 
@@ -152,12 +162,13 @@ namespace Octoller.BotBox.Web.Controllers {
         }
 
         [HttpGet]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl) {
-
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl) 
+        {
             ExternalLoginInfo loginInfo = await this.signInManager
                 .GetExternalLoginInfoAsync();
 
-            if (loginInfo is null) {
+            if (loginInfo is null) 
+            {
                 return RedirectToAction("Login");
             }
 
@@ -167,12 +178,12 @@ namespace Octoller.BotBox.Web.Controllers {
                 isPersistent: true,
                 bypassTwoFactor: false);
 
-            if (result.Succeeded) {
-
+            if (result.Succeeded) 
+            {
                 return Redirect(returnUrl);
-
-            } else {
-
+            } 
+            else 
+            {
                 string userEmail = loginInfo.Principal.Claims
                         .Where(c => c.Type == ClaimTypes.Email)
                         .FirstOrDefault()
@@ -180,9 +191,10 @@ namespace Octoller.BotBox.Web.Controllers {
 
                 User user = await this.userManager.FindByEmailAsync(userEmail);
 
-                if (user is null) {
-
-                    _ = await this.userManager.CreateAsync(new User {
+                if (user is null) 
+                {
+                    _ = await this.userManager.CreateAsync(new User 
+                    {
                         Email = userEmail,
                         UserName = userEmail
                     });
@@ -193,18 +205,18 @@ namespace Octoller.BotBox.Web.Controllers {
                 IdentityResult createAccountResult = await this.vkProvider
                     .CreateVkAccountAsync(user.Id, userEmail, loginInfo);
 
-                if (createAccountResult.Succeeded) {
-
+                if (createAccountResult.Succeeded) 
+                {
                     IdentityResult addRoleResult = await this.userManager
                         .AddToRoleAsync(user, AppData.RolesData.UserRoleName);
 
-                    if (addRoleResult.Succeeded) {
-
+                    if (addRoleResult.Succeeded) 
+                    {
                         IdentityResult addLoginInfoResult = await this.userManager
                             .AddLoginAsync(user, loginInfo);
 
-                        if (addLoginInfoResult.Succeeded) {
-
+                        if (addLoginInfoResult.Succeeded) 
+                        {
                             await this.signInManager.SignOutAsync();
                             await this.signInManager.SignInAsync(user, true);
 
@@ -218,10 +230,9 @@ namespace Octoller.BotBox.Web.Controllers {
         }
 
         [HttpGet]
-        public async Task<IActionResult> LogOut() {
-
+        public async Task<IActionResult> LogOut() 
+        {
             await this.signInManager.SignOutAsync();
-
             return RedirectToAction("Index", "Home");
         }
     }

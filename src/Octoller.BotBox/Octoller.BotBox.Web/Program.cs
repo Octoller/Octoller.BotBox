@@ -2,33 +2,32 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System;
 
-namespace Octoller.BotBox.Web {
-
-    public class Program {
-
-        public static async Task Main(string[] args) {
-
+namespace Octoller.BotBox.Web 
+{
+    public class Program 
+    {
+        public static void Main(string[] args)
+        {
             IHost host = CreateHostBuilder(args).Build();
 
-            using (IServiceScope scope = host.Services.CreateScope()) {
-
-                await Data.DataInitilizer.InitializeAsync(scope.ServiceProvider);
+            using (IServiceScope scope = host.Services.CreateScope()) 
+            {
+                Data.DataInitilizer.InitializeAsync(scope.ServiceProvider).GetAwaiter().GetResult();
             }
 
             host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) {
-           
+        public static IHostBuilder CreateHostBuilder(string[] args) 
+        {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => {
-
-                    webBuilder.UseKestrel()
-                        .UseContentRoot(System.IO.Directory.GetCurrentDirectory())
-                        .ConfigureAppConfiguration((context, builder) => {
-
+                .ConfigureWebHostDefaults(webBuilder => 
+                {
+                    webBuilder.ConfigureAppConfiguration((context, builder) => 
+                        {
                             builder.AddJsonFile(
                                 path: "appsettings.json",
                                 optional: true, reloadOnChange: true);
@@ -43,12 +42,13 @@ namespace Octoller.BotBox.Web {
 
                             builder.AddEnvironmentVariables();
 
-                            if (args is not null)
+                            if (args != null)
                                 builder.AddCommandLine(args);
 
                         })
-                        .UseIIS()
-                        .UseDefaultServiceProvider((context, options) => {
+                        .UseKestrel()
+                        .UseDefaultServiceProvider((context, options) => 
+                        {
                             options.ValidateScopes = false;
                         })
                         .UseStartup<Startup>();

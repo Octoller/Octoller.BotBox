@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Octoller.BotBox.Web.Logging {
-
+namespace Octoller.BotBox.Web.Logging 
+{
     /// <summary>
     /// Предоставляет набор объектов структуры EventId для событий логирования
     /// </summary>
-    public static class LogsHelper {
-
+    public static class LogsHelper 
+    {
         /// <summary>
         /// Указывает на успешное подключение к сервису
         /// </summary>

@@ -1,17 +1,13 @@
-﻿namespace Octoller.BotBox.Web.ViewModels {
+﻿namespace Octoller.BotBox.Web.ViewModels 
+{
+    public class CommunityViewModel 
+    {
+        public string Id { get; set; }
 
-    public class CommunityViewModel {
+        public string Name { get; set; }
 
-        public string Name {
-            get; set;
-        }
+        public byte[] Photo { get; set; }
 
-        public byte[] Photo {
-            get; set;
-        }
-
-        public bool Connected {
-            get; set;
-        }
+        public bool Connected { get; set; }
     }
 }

@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Octoller.BotBox.Web.Models;
 
-namespace Octoller.BotBox.Web.Data.Configurations {
-
-    public class CommunityModelConfiguration : IEntityTypeConfiguration<Community> {
-
-        public void Configure(EntityTypeBuilder<Community> builder) {
-
+namespace Octoller.BotBox.Web.Data.Configurations 
+{
+    public class CommunityModelConfiguration : IEntityTypeConfiguration<Community> 
+    {
+        public void Configure(EntityTypeBuilder<Community> builder) 
+        {
             builder.ToTable("Communities");
             builder.HasKey(c => c.Id);
             builder.HasAlternateKey(c => c.VkId);
@@ -26,7 +26,6 @@ namespace Octoller.BotBox.Web.Data.Configurations {
             builder.HasIndex(c => c.Name);
 
             builder.HasOne(c => c.User).WithMany(u => u.Communities);
-
         }
     }
 }

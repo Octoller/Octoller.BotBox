@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Octoller.BotBox.Web.Models;
 
-namespace Octoller.BotBox.Web.Data.Configurations {
-
-    public class AccountModelConfiguration : IEntityTypeConfiguration<Account> {
-
-        public void Configure(EntityTypeBuilder<Account> builder) {
-            
+namespace Octoller.BotBox.Web.Data.Configurations 
+{
+    public class AccountModelConfiguration : IEntityTypeConfiguration<Account> 
+    {
+        public void Configure(EntityTypeBuilder<Account> builder) 
+        {
             builder.ToTable("Accounts");
             builder.HasKey(a => a.Id);
             builder.HasAlternateKey(a => a.VkId);

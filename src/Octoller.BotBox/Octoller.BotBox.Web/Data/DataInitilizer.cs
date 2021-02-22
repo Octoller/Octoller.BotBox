@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Octoller.BotBox.Web.Kernel;
 using Octoller.BotBox.Web.Models;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Octoller.BotBox.Web.Data {
-
-    public static class DataInitilizer {
-
-        public static async Task InitializeAsync(IServiceProvider service) {
-
+namespace Octoller.BotBox.Web.Data
+{
+    public static class DataInitilizer 
+    {
+        public static async Task InitializeAsync(IServiceProvider service) 
+        {
             IServiceScope scope = service.CreateScope();
 
             using ApplicationDbContext context = scope.ServiceProvider.GetService<ApplicationDbContext>();
@@ -25,29 +26,25 @@ namespace Octoller.BotBox.Web.Data {
             bool isExists = context.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator
                 && await databaseCreator.ExistsAsync();
 
-            if (isExists) {
-                return;
-            }
+            StringBuilder errorMessage = new StringBuilder();
 
-            await context.Database.MigrateAsync();
-
-            //создаем роли
             RoleStore<IdentityRole> roleStore = new RoleStore<IdentityRole>(context);
 
-            foreach (string role in AppData.RolesData.Roles) {
-
-                if (!context.Roles.Any(r => r.Name == role)) {
-
-                    IdentityResult createRoleResult = await roleStore.CreateAsync(new IdentityRole(role) {
-                        NormalizedName = role.ToUpper()
-                    });
-
-                    if (!createRoleResult.Succeeded) {
-
-                        string message = string.Join(" | ",
-                            createRoleResult.Errors.Select(x => $"{x.Code}: {x.Description}"));
-
-                        throw new Exception(message);
+            foreach (string role in AppData.RolesData.Roles) 
+            {
+                if (!context.Roles.Any(r => r.Name == role)) 
+                {
+                    try
+                    {
+                        IdentityResult createRoleResult = await roleStore.CreateAsync(new IdentityRole(role)
+                        {
+                            NormalizedName = role.ToUpper()
+                        });
+                    }
+                    catch(Exception ex)
+                    {
+                        errorMessage.Append("Ошибка создания ролей: ");
+                        errorMessage.Append(ex.Message);
                     }
                 }
             }
@@ -57,7 +54,8 @@ namespace Octoller.BotBox.Web.Data {
 
             string email = configure["Data:AdminData:Email"];
 
-            User user = new User {
+            User user = new User 
+            {
                 Email = email,
                 EmailConfirmed = true,
                 NormalizedEmail = email.ToUpper(),
@@ -71,29 +69,47 @@ namespace Octoller.BotBox.Web.Data {
 
             UserStore<User> userStroe = new UserStore<User>(context);
 
-            IdentityResult resultCreateUser = await userStroe.CreateAsync(user);
-
-            if (!resultCreateUser.Succeeded) {
-                string message = string.Join(" | ",
-                    resultCreateUser.Errors.Select(x => $"{x.Code}: {x.Description}"));
-                throw new Exception(message);
+            try
+            {
+                IdentityResult resultCreateUser = await userStroe.CreateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                errorMessage.Append("\nОшибка создания пользователя: ");
+                errorMessage.Append(ex.Message);
             }
 
             // добавляем администратору роль администратора
             UserManager<User> userManager = scope.ServiceProvider.GetService<UserManager<User>>();
 
-            foreach (string role in AppData.RolesData.Roles) {
-
+            foreach (string role in AppData.RolesData.Roles) 
+            {
                 IdentityResult resultAddRole = await userManager.AddToRoleAsync(user, role);
 
-                if (!resultAddRole.Succeeded) {
+                if (!resultAddRole.Succeeded) 
+                {
                     string message = string.Join(" | ",
-                        resultCreateUser.Errors.Select(x => $"{x.Code}: {x.Description}"));
-                    throw new Exception(message);
+                        resultAddRole.Errors.Select(x => $"{x.Code}: {x.Description}"));
+
+                    errorMessage.Append("\nОшибка добавления роли пользователю: ");
+                    errorMessage.Append(message);
                 }
             }
 
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                errorMessage.Append("\nОшибка сохранения данных: ");
+                errorMessage.Append(ex.Message);
+            }
+
+            if (errorMessage is not null)
+            {
+                scope.ServiceProvider.GetService<ILogger<Program>>()?.LogError(errorMessage.ToString());
+            }
         }
     }
 }

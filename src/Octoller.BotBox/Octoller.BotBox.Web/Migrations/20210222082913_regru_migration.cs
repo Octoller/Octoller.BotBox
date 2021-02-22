@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Octoller.BotBox.Web.Data.Migrations
+namespace Octoller.BotBox.Web.Migrations
 {
-    public partial class updateConfigure : Migration
+    public partial class regru_migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
