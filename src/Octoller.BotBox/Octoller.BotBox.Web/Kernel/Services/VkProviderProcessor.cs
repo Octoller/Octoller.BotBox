@@ -22,14 +22,20 @@ namespace Octoller.BotBox.Web.Kernel.Services
     {
         private readonly IVkApi vkApi;
         private readonly ILogger<VkProviderProcessor> logger;
-        private readonly VkDataStore store;
+        private readonly AccountStore accountStore;
+        private readonly CommunityStore communityStore;
+        private readonly UserManager<Models.User> userManager;
 
         public VkProviderProcessor(
             ILogger<VkProviderProcessor> logger,
-            VkDataStore vkStore) 
+            CommunityStore communityStore,
+            AccountStore accountStore,
+            UserManager<Models.User> userManager) 
         {
             this.logger = logger;
-            this.store = vkStore;
+            this.accountStore = accountStore;
+            this.communityStore = communityStore;
+            this.userManager = userManager;
             this.vkApi = new VkApi();
         }
 
@@ -42,7 +48,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <returns>Набор данных пользователя</returns>
         public async Task<TVkData> FindAccounByUserIdAsync<TVkData>(string userId, System.Func<Account, TVkData> cast) 
         {
-            Account vkAccount = await this.store.GetAccountByUserIdAsync(userId);
+            Account vkAccount = await accountStore.GetByUserIdAsync(userId);
 
             if (vkAccount is null)
             {
@@ -59,7 +65,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <returns>Результат выполнения операции</returns>
         public async Task<IdentityResult> CreateVkAccountAsync(string userId, string email, ExternalLoginInfo loginInfo) 
         {
-            if (await this.FindAccounByUserIdAsync(userId, a => a.Id) != null) 
+            if (await FindAccounByUserIdAsync(userId, a => a.Id) != null) 
             {
                 return IdentityResult.Success;
             }
@@ -72,25 +78,21 @@ namespace Octoller.BotBox.Web.Kernel.Services
 
             try 
             {
-
-                await this.vkApi?.AuthorizeAsync(new VkNet.Model.ApiAuthParams 
+                await vkApi?.AuthorizeAsync(new ApiAuthParams 
                 {
                     AccessToken = token.Value,
                     UserId = vkId
                 });
 
                 LogWriter.Conected(logger, "Vk", $"client id {vkId}");
-
             } 
-            catch (System.Exception ex) 
+            catch (Exception ex) 
             {
-
                 LogWriter.Conected(logger, "Vk", $"client id {vkId}", ex);
-
                 return FailedResult(ex.Message);
             }
 
-            var vkUser = (await this.vkApi.Users.GetAsync(
+            var vkUser = (await vkApi.Users.GetAsync(
                     userIds: new[] { vkId },
                     fields: ProfileFields.Photo100))
                 .FirstOrDefault();
@@ -101,18 +103,16 @@ namespace Octoller.BotBox.Web.Kernel.Services
                 Name = vkUser.FirstName + " " + vkUser.LastName ?? " ",
                 AccessToken = token.Value,
                 Photo = await GetFileByteArray(vkUser.Photo100.AbsoluteUri),
-                UpdateAt = DateTime.Now,
-                CreatedAt = DateTime.Now,
-                UpdateBy = email,
-                CreateBy = email,
                 UserId = userId
             };
 
-            bool resultCreateAccount = await this.store.CreateAccountAsync(account);
+            string initiatorName = GetUserName(userId);
+
+            bool resultCreateAccount = await accountStore.CreateAsync(account, initiatorName);
 
             if (resultCreateAccount) 
             {
-                VkCollection<Group> communities = await this.vkApi.Groups.GetAsync(new GroupsGetParams 
+                VkCollection<Group> communities = await vkApi.Groups.GetAsync(new GroupsGetParams 
                 {
                     UserId = vkId,
                     Filter = GroupsFilters.Administrator,
@@ -123,17 +123,13 @@ namespace Octoller.BotBox.Web.Kernel.Services
                 if (communities.Any()) 
                 {
                     foreach (var g in communities)
-                        await this.store.CreateGroupAsync(new Community 
+                        await communityStore.CreateAsync(new Community 
                         {
                             VkId = g.Id.ToString(),
                             Name = g.Name,
                             Photo = await GetFileByteArray(g.Photo100.AbsoluteUri),
-                            UpdateAt = DateTime.Now,
-                            CreatedAt = DateTime.Now,
-                            UpdateBy = email,
-                            CreateBy = email,
                             UserId = userId
-                        });
+                        }, initiatorName);
                 }
 
                 return IdentityResult.Success;
@@ -151,7 +147,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <returns>Коллекция сообществ</returns>
         public IEnumerable<TElement> GetCommunity<TElement>(string userId, System.Func<Community, TElement> cast) 
         {
-            var groups = this.store.GetGroupByUserId(userId);
+            var groups = communityStore.GetByUserId(userId);
             var listResult = new List<TElement>();
 
             if (groups.Any()) 
@@ -173,7 +169,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <returns></returns>
         public async Task<PropertiesAuthCommunity> GetRequestUrlForAuthorizeCommunityAsync(string id, string redirectUri) 
         {
-            Community community = await store.GetGroupByIdAsync(id);
+            Community community = await communityStore.GetByIdAsync(id);
 
             return new PropertiesAuthCommunity 
             {
@@ -192,7 +188,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
 
             foreach (var token in tiket.StoreToken.Tokens)
             {
-               var community = store.Groups
+               var community = communityStore.Communities
                     .Where(g => g.VkId == token.Community)
                     .FirstOrDefault();
 
@@ -200,8 +196,9 @@ namespace Octoller.BotBox.Web.Kernel.Services
                 {
                     community.AccessToken = token.Value;
                     community.Connected = true;
+                    ///TODO: при авторизации нужно указывать имя или id пользователя
                     ///TODO: Запись в лог
-                    await store.UpdateGroupAsync(community);
+                    await communityStore.UpdateAsync(community);
                 }
             }
 
@@ -226,5 +223,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
             using HttpContent content = (await new HttpClient().GetAsync(url)).Content;
             return await content.ReadAsByteArrayAsync();
         }
+
+        private string GetUserName(string id) => userManager.FindByIdAsync(id).Result.UserName;
     }
 }

@@ -18,9 +18,9 @@ namespace Octoller.BotBox.Web.Data.Configurations
             builder.Property(a => a.VkId).IsRequired().HasMaxLength(100);
             builder.Property(a => a.AccessToken).HasMaxLength(250);
             builder.Property(a => a.CreatedAt).IsRequired();
-            builder.Property(a => a.CreateBy).IsRequired().HasMaxLength(100);
-            builder.Property(a => a.UpdateAt);
-            builder.Property(a => a.UpdateBy).HasMaxLength(100);
+            builder.Property(a => a.CreatedBy).IsRequired().HasMaxLength(100);
+            builder.Property(a => a.UpdatedAt);
+            builder.Property(a => a.UpdatedBy).HasMaxLength(100);
 
             builder.HasIndex(a => a.Name);
 

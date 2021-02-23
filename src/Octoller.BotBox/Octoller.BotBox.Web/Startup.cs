@@ -68,7 +68,8 @@ namespace Octoller.BotBox.Web
                 });
             });
 
-            services.AddTransient<VkDataStore>()
+            services.AddTransient<AccountStore>()
+                .AddTransient<CommunityStore>()
                 .AddScoped<VkProviderProcessor>()
                 .AddScoped<DataProtectorAuthComunnity>()
                 .AddScoped<HandlerAuthCommunity>()

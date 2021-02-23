@@ -7,19 +7,26 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Octoller.BotBox.Web.Kernel;
 using Octoller.BotBox.Web.Models;
-using System;
+using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace Octoller.BotBox.Web.Data
 {
+    /// <summary>
+    /// Класс инициализации базы данных начальными значениями
+    /// </summary>
     public static class DataInitilizer 
     {
+        /// <summary>
+        /// Инициализирует базу данныха начальными значениями
+        /// </summary>
+        /// <param name="service">Провайдер сервисов <see cref="IServiceProvider"/></param>
         public static async Task InitializeAsync(IServiceProvider service) 
         {
             IServiceScope scope = service.CreateScope();
-
+            
             using ApplicationDbContext context = scope.ServiceProvider.GetService<ApplicationDbContext>();
 
             //проверяем, создана ли база данных, если нет - создаем
