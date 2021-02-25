@@ -101,11 +101,11 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 
         private async Task<ResultAuthCommunity> HandleAuthenticationAsync() 
         {
-            IQueryCollection query = Request.Query;
+            var query = Request.Query;
 
-            string state = query["state"];
+            var state = query["state"];
 
-            PropertiesAuthCommunity properties = options.StateDataFormat
+            var properties = options.StateDataFormat
                 .Unprotect(state, Request.HttpContext.User.Identity.Name);
 
             if (properties is null || properties.IsEmpty) 
@@ -113,21 +113,21 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
                 return ResultAuthCommunity.Fail("Состояние подключения для получения доступа отсутствует или недействительно", null);
             }
 
-            string error = query["error"];
+            var error = query["error"];
             if (!string.IsNullOrEmpty(error)) 
             {
-                string errorDescription = query["error_description"];
+                var errorDescription = query["error_description"];
 
                 if (string.Equals(error, "access_denied")) 
                 {
                     ///TODO: обработка в случае ошибки доступа
                     //var result = await HandleAccessDeniedErrorAsync(properties);
-                    
+
                     //if (!result.None) {
                     //    return result;
                     //}
 
-                    Exception deniedExeption = new Exception("Доступ был запрещен владельцем ресурса или удаленным сервером.");
+                    var deniedExeption = new Exception("Доступ был запрещен владельцем ресурса или удаленным сервером.");
 
                     deniedExeption.Data["error"] = error.ToString();
                     deniedExeption.Data["error_description"] = errorDescription.ToString();
@@ -135,7 +135,7 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
                     return ResultAuthCommunity.Fail(deniedExeption, properties);
                 }
 
-                StringBuilder failureMessage = new StringBuilder();
+                var failureMessage = new StringBuilder();
 
                 failureMessage.Append(error);
 
@@ -145,7 +145,7 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
                         .Append(errorDescription);
                 }
 
-                Exception exception = new Exception(failureMessage.ToString());
+                var exception = new Exception(failureMessage.ToString());
 
                 exception.Data["error"] = error.ToString();
                 exception.Data["error_description"] = errorDescription.ToString();
@@ -153,17 +153,17 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
                 return ResultAuthCommunity.Fail(exception, properties);
             }
 
-            string code = query["code"];
+            var code = query["code"];
 
             if (string.IsNullOrEmpty(code)) 
             {
                 return ResultAuthCommunity.Fail("Код не найден", properties);
             }
 
-            CodeExchangeContext codeExchangeContext
+            var codeExchangeContext
                 = new CodeExchangeContext(properties, code, BuildRedirectUri(options.CallbackPath));
 
-            TokenResponseAuthCommunity tokens = await ExchangeCodeForKey(codeExchangeContext);
+            var tokens = await ExchangeCodeForKey(codeExchangeContext);
 
             if (tokens.Error != null) 
             {
@@ -184,7 +184,7 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 
         private async Task<TokenResponseAuthCommunity> ExchangeCodeForKey(CodeExchangeContext context) 
         {
-            Dictionary<string, string> tokenRequestParametrs = new Dictionary<string, string>() 
+            var tokenRequestParametrs = new Dictionary<string, string>() 
             {
                 { "client_id", options.ClientId },
                 { "client_secret", options.ClientSecret },
@@ -192,17 +192,17 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
                 { "code", context.Code }
             };
 
-            FormUrlEncodedContent requestContent = new FormUrlEncodedContent(tokenRequestParametrs);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, options.TokenEndpoint);
+            var requestContent = new FormUrlEncodedContent(tokenRequestParametrs);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, options.TokenEndpoint);
             requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             requestMessage.Version = options.Backchannel.DefaultRequestVersion;
             requestMessage.Content = requestContent;
 
-            HttpResponseMessage response = await options.Backchannel.SendAsync(requestMessage);
+            var response = await options.Backchannel.SendAsync(requestMessage);
 
             if (response.IsSuccessStatusCode) 
             {
-                JObject payload = JObject.Parse(await response.Content.ReadAsStringAsync());
+                var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
                 return TokenResponseAuthCommunity.Success(payload);
             }
             else 
@@ -219,9 +219,9 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
                 properties.RedirectUri = Request.PathBase + Request.Path + Request.QueryString;
             }
 
-            string authCommunityEndpoint = BuildChallengeUrl(properties, BuildRedirectUri(options.CallbackPath));
+            var authCommunityEndpoint = BuildChallengeUrl(properties, BuildRedirectUri(options.CallbackPath));
 
-            AuthCommunityEventContext redirectContext = new AuthCommunityEventContext(
+            var redirectContext = new AuthCommunityEventContext(
                 properties: properties,
                 options: options,
                 context: context,
@@ -232,10 +232,10 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 
         private string BuildChallengeUrl(PropertiesAuthCommunity properties, string redirectUri) 
         {
-            string scope = string.Join(",", options.Scope);
-            string state = options.StateDataFormat.Protect(properties);
+            var scope = string.Join(",", options.Scope);
+            var state = options.StateDataFormat.Protect(properties);
 
-            Dictionary<string, string> parameters = new Dictionary<string, string> 
+            var parameters = new Dictionary<string, string> 
             {
                 { "client_id", options.ClientId },
                 { "redirect_uri", redirectUri },

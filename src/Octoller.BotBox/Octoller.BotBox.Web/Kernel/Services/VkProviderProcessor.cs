@@ -48,7 +48,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <returns>Набор данных пользователя</returns>
         public async Task<Account> FindAccounByUserIdAsync(string userId) 
         {
-            Account vkAccount = await accountStore.GetByUserIdAsync(userId);
+            var vkAccount = await accountStore.GetByUserIdAsync(userId);
 
             if (vkAccount is null)
             {
@@ -97,7 +97,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
                     fields: ProfileFields.Photo100))
                 .FirstOrDefault();
 
-            Account account = new Account 
+            var account = new Account 
             {
                 VkId = vkId.ToString(),
                 Name = vkUser.FirstName + " " + vkUser.LastName ?? " ",
@@ -106,13 +106,13 @@ namespace Octoller.BotBox.Web.Kernel.Services
                 UserId = userId
             };
 
-            string initiatorName = GetUserName(userId);
+            var initiatorName = GetUserName(userId);
 
-            bool resultCreateAccount = await accountStore.CreateAsync(account, initiatorName);
+            var resultCreateAccount = await accountStore.CreateAsync(account, initiatorName);
 
             if (resultCreateAccount) 
             {
-                VkCollection<Group> communities = await vkApi.Groups.GetAsync(new GroupsGetParams 
+                var communities = await vkApi.Groups.GetAsync(new GroupsGetParams 
                 {
                     UserId = vkId,
                     Filter = GroupsFilters.Administrator,
@@ -169,7 +169,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <returns></returns>
         public async Task<PropertiesAuthCommunity> GetRequestUrlForAuthorizeCommunityAsync(string id, string redirectUri) 
         {
-            Community community = await communityStore.GetByIdAsync(id);
+            var community = await communityStore.GetByIdAsync(id);
 
             return new PropertiesAuthCommunity 
             {

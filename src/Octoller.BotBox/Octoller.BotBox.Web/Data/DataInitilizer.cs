@@ -30,20 +30,20 @@ namespace Octoller.BotBox.Web.Data
             using ApplicationDbContext context = scope.ServiceProvider.GetService<ApplicationDbContext>();
 
             //проверяем, создана ли база данных, если нет - создаем
-            bool isExists = context.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator
+            var isExists = context.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator
                 && await databaseCreator.ExistsAsync();
 
-            StringBuilder errorMessage = new StringBuilder();
+            var errorMessage = new StringBuilder();
 
-            RoleStore<IdentityRole> roleStore = new RoleStore<IdentityRole>(context);
+            var roleStore = new RoleStore<IdentityRole>(context);
 
-            foreach (string role in AppData.RolesData.Roles) 
+            foreach (var role in AppData.RolesData.Roles) 
             {
                 if (!context.Roles.Any(r => r.Name == role)) 
                 {
                     try
                     {
-                        IdentityResult createRoleResult = await roleStore.CreateAsync(new IdentityRole(role)
+                        var createRoleResult = await roleStore.CreateAsync(new IdentityRole(role)
                         {
                             NormalizedName = role.ToUpper()
                         });
@@ -57,11 +57,11 @@ namespace Octoller.BotBox.Web.Data
             }
 
             //создаем учетную запись админимстратора
-            IConfiguration configure = context.GetService<IConfiguration>();
+            var configure = context.GetService<IConfiguration>();
 
             string email = configure["Data:AdminData:Email"];
 
-            User user = new User 
+            var user = new User 
             {
                 Email = email,
                 EmailConfirmed = true,
@@ -70,15 +70,15 @@ namespace Octoller.BotBox.Web.Data
                 NormalizedUserName = email.ToUpper()
             };
 
-            PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
+            var passwordHasher = new PasswordHasher<User>();
 
             user.PasswordHash = passwordHasher.HashPassword(user, configure["Data:AdminData:Password"]);
 
-            UserStore<User> userStroe = new UserStore<User>(context);
+            var userStroe = new UserStore<User>(context);
 
             try
             {
-                IdentityResult resultCreateUser = await userStroe.CreateAsync(user);
+                var resultCreateUser = await userStroe.CreateAsync(user);
             }
             catch (Exception ex)
             {
@@ -87,22 +87,21 @@ namespace Octoller.BotBox.Web.Data
             }
 
             // добавляем администратору роль администратора
-            UserManager<User> userManager = scope.ServiceProvider.GetService<UserManager<User>>();
+            var userManager = scope.ServiceProvider.GetService<UserManager<User>>();
 
-            foreach (string role in AppData.RolesData.Roles) 
+            foreach (var role in AppData.RolesData.Roles) 
             {
-                IdentityResult resultAddRole = await userManager.AddToRoleAsync(user, role);
+                var resultAddRole = await userManager.AddToRoleAsync(user, role);
 
                 if (!resultAddRole.Succeeded) 
                 {
-                    string message = string.Join(" | ",
+                    var message = string.Join(" | ",
                         resultAddRole.Errors.Select(x => $"{x.Code}: {x.Description}"));
 
                     errorMessage.Append("\nОшибка добавления роли пользователю: ");
                     errorMessage.Append(message);
                 }
             }
-
             try
             {
                 await context.SaveChangesAsync();

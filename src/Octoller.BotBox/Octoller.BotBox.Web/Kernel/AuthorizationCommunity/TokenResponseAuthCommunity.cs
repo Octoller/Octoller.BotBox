@@ -18,7 +18,7 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
         private TokenResponseAuthCommunity(JObject response) 
         {
             Response = response;
-            JToken groups = response.GetValue("groups");
+            var groups = response.GetValue("groups");
             Tokens = new List<AuthToken>(); 
 
             foreach (var item in groups) 

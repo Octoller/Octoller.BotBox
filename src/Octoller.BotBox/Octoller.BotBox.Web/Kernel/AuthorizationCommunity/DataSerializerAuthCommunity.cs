@@ -22,9 +22,9 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
         /// <returns></returns>
         public byte[] Serialize(PropertiesAuthCommunity item) 
         {
-            using (MemoryStream memory = new MemoryStream()) 
+            using (var memory = new MemoryStream()) 
             {
-                using (BinaryWriter writer = new BinaryWriter(memory)) 
+                using (var writer = new BinaryWriter(memory)) 
                 {
                     Write(writer, item);
                     writer.Flush();
@@ -40,9 +40,9 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
         /// <returns></returns>
         public PropertiesAuthCommunity Deserialize(byte[] data) 
         {
-            using (MemoryStream memory = new MemoryStream(data)) 
+            using (var memory = new MemoryStream(data)) 
             {
-                using (BinaryReader reader = new BinaryReader(memory)) 
+                using (var reader = new BinaryReader(memory)) 
                 {
                     return Read(reader);
                 }
@@ -88,14 +88,14 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
             }
 
             //считываем колличество записаных строк
-            int count = reader.ReadInt32();
+            var count = reader.ReadInt32();
 
-            Dictionary<string, string> extra = new Dictionary<string, string>(count);
+            var extra = new Dictionary<string, string>(count);
 
             for (int i = 0; i != count; ++i) 
             {
-                string key = reader.ReadString();
-                string value = reader.ReadString();
+                var key = reader.ReadString();
+                var value = reader.ReadString();
                 extra.Add(key, value);
             }
 

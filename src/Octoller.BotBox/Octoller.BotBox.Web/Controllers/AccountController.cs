@@ -44,8 +44,7 @@ namespace Octoller.BotBox.Web.Controllers
             }
 
             //получаем имена всех подключенных провайдеров авторизации
-            IEnumerable<AuthenticationScheme> providers = await this.signInManager
-                .GetExternalAuthenticationSchemesAsync();
+            var providers = await this.signInManager.GetExternalAuthenticationSchemesAsync();
 
             return View(new LoginViewModel 
             {
@@ -65,11 +64,11 @@ namespace Octoller.BotBox.Web.Controllers
 
             if (ModelState.IsValid) 
             {
-                User user = await this.userManager.FindByEmailAsync(loginData.Email);
+                var user = await this.userManager.FindByEmailAsync(loginData.Email);
 
                 if (user != null) 
                 {
-                    Microsoft.AspNetCore.Identity.SignInResult signInResult = await this.signInManager
+                    var signInResult = await this.signInManager
                         .PasswordSignInAsync(user, loginData.Password, loginData.IsPersistent, false);
 
                     if (signInResult.Succeeded) 
@@ -99,7 +98,7 @@ namespace Octoller.BotBox.Web.Controllers
             }
 
             //получаем имена всех подключенных провайдеров авторизации
-            IEnumerable<AuthenticationScheme> providers = await this.signInManager
+            var providers = await this.signInManager
                 .GetExternalAuthenticationSchemesAsync();
 
             return View(new RegisterViewModel 
@@ -120,15 +119,14 @@ namespace Octoller.BotBox.Web.Controllers
 
             if (ModelState.IsValid) 
             {
-                User user = new User 
+                var user = new User 
                 {
                     UserName = registerData.Email,
                     Email = registerData.Email
                 };
 
                 // создаем пользователя
-                IdentityResult resultCreate = await this.userManager
-                    .CreateAsync(user, registerData.Password);
+                var resultCreate = await this.userManager.CreateAsync(user, registerData.Password);
 
                 if (resultCreate.Succeeded) 
                 {
@@ -139,7 +137,7 @@ namespace Octoller.BotBox.Web.Controllers
                 } 
                 else 
                 {
-                    foreach (IdentityError error in resultCreate.Errors) 
+                    foreach (var error in resultCreate.Errors) 
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
@@ -154,12 +152,12 @@ namespace Octoller.BotBox.Web.Controllers
         {
             returnUrl ??= Url.Action("Index", "Home");
 
-            string redirectUrl = Url.Action("ExternalLoginCallback", "Account", new 
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new 
             {
                 returnUrl
             });
 
-            AuthenticationProperties properties = this.signInManager
+            var properties = this.signInManager
                 .ConfigureExternalAuthenticationProperties(providerName, redirectUrl);
 
             return Challenge(properties, providerName);        
@@ -168,15 +166,14 @@ namespace Octoller.BotBox.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl) 
         {
-            ExternalLoginInfo loginInfo = await this.signInManager
-                .GetExternalLoginInfoAsync();
+            var loginInfo = await this.signInManager.GetExternalLoginInfoAsync();
 
             if (loginInfo is null) 
             {
                 return RedirectToAction("Login");
             }
 
-            Microsoft.AspNetCore.Identity.SignInResult result = await this.signInManager.ExternalLoginSignInAsync(
+            var result = await this.signInManager.ExternalLoginSignInAsync(
                 loginProvider: loginInfo.LoginProvider,
                 providerKey: loginInfo.ProviderKey,
                 isPersistent: true,
@@ -188,12 +185,12 @@ namespace Octoller.BotBox.Web.Controllers
             } 
             else 
             {
-                string userEmail = loginInfo.Principal.Claims
+                var userEmail = loginInfo.Principal.Claims
                         .Where(c => c.Type == ClaimTypes.Email)
                         .FirstOrDefault()
                         .Value;
 
-                User user = await this.userManager.FindByEmailAsync(userEmail);
+                var user = await this.userManager.FindByEmailAsync(userEmail);
 
                 if (user is null) 
                 {
@@ -206,17 +203,17 @@ namespace Octoller.BotBox.Web.Controllers
                     user = await this.userManager.FindByEmailAsync(userEmail);
                 }
 
-                IdentityResult createAccountResult = await this.vkProvider
+                var createAccountResult = await this.vkProvider
                     .CreateVkAccountAsync(user.Id, userEmail, loginInfo);
 
                 if (createAccountResult.Succeeded) 
                 {
-                    IdentityResult addRoleResult = await this.userManager
+                    var addRoleResult = await this.userManager
                         .AddToRoleAsync(user, AppData.RolesData.UserRoleName);
 
                     if (addRoleResult.Succeeded) 
                     {
-                        IdentityResult addLoginInfoResult = await this.userManager
+                        var addLoginInfoResult = await this.userManager
                             .AddLoginAsync(user, loginInfo);
 
                         if (addLoginInfoResult.Succeeded) 

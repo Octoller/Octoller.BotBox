@@ -38,7 +38,7 @@ namespace Octoller.BotBox.Web.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> Index() 
         {
-            User user = await this.userManager.FindByNameAsync(User.Identity.Name);
+            var user = await this.userManager.FindByNameAsync(User.Identity.Name);
 
             var communities = vkProvider.GetCommunity(user.Id);
             var communityViewModels = new List<CommunityViewModel>();
@@ -61,10 +61,9 @@ namespace Octoller.BotBox.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            string redirectUri = Url.Action("AuthorizeCommunityCallback", "Community");
+            var redirectUri = Url.Action("AuthorizeCommunityCallback", "Community");
 
-            PropertiesAuthCommunity properties = await this.vkProvider
-                .GetRequestUrlForAuthorizeCommunityAsync(id, redirectUri);
+            var properties = await this.vkProvider.GetRequestUrlForAuthorizeCommunityAsync(id, redirectUri);
 
             if (properties.IsEmpty) 
             {

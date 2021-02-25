@@ -26,7 +26,7 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 
             if (options.StateDataFormat is null) 
             {
-                IDataProtector protector = protectionProvider.CreateProtector(
+                var protector = protectionProvider.CreateProtector(
                     typeof(OptionsAuthCommunity).FullName, name, "v1");
 
                 options.StateDataFormat = new DataProtectorAuthComunnity(DataSerializerAuthCommunity.Default, protector);

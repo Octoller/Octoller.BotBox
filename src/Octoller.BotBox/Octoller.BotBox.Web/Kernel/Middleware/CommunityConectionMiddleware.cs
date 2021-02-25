@@ -18,7 +18,7 @@ namespace Octoller.BotBox.Web.Kernel.Middleware
         {
             string urlsection = context.Request.Path.Value.ToLower();
 
-            HandlerAuthCommunity handler = context.RequestServices
+            var handler = context.RequestServices
                 .GetRequiredService<HandlerAuthCommunity>();
 
             if (await handler.HandleRequstAsync()) 
