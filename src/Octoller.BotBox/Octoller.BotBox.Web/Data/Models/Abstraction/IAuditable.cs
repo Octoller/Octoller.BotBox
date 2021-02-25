@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Octoller.BotBox.Web.Models.Abstraction 
+namespace Octoller.BotBox.Web.Data.Models.Abstraction
 {
     public interface IAuditable 
     {

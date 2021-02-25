@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Net.Http;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
     /// Параметры конфигурации для запроса доступа к сообществам на стороне внешнего провайдера (Вконтакте)

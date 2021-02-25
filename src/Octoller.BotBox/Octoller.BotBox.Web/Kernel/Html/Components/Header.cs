@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Octoller.BotBox.Web.Data.Models;
 using Octoller.BotBox.Web.Kernel.Services;
-using Octoller.BotBox.Web.Models;
 using Octoller.BotBox.Web.ViewModels;
 
-namespace Octoller.BotBox.Web.Kernel.Html.Components {
+namespace Octoller.BotBox.Web.Kernel.Html.Components
+{
 
     public class Header : ViewComponent {
 
@@ -29,7 +30,7 @@ namespace Octoller.BotBox.Web.Kernel.Html.Components {
                 string id = this.userManager.FindByNameAsync(User.Identity.Name).Result?.Id;
 
                 headerInfo.ShowName = vkProvider
-                    .FindAccounByUserIdAsync(id, account => account.Name).Result
+                    .FindAccounByUserIdAsync(id).Result?.Name
                     ?? User.Identity.Name;
             }
 

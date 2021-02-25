@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Octoller.BotBox.Web.Models;
+using Octoller.BotBox.Web.Data.Models;
 
-namespace Octoller.BotBox.Web.Data.Configurations 
+namespace Octoller.BotBox.Web.Data.Configurations
 {
     public class CommunityModelConfiguration : IEntityTypeConfiguration<Community> 
     {

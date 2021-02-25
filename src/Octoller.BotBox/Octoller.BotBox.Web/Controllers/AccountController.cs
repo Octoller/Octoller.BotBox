@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Octoller.BotBox.Web.Models;
 using Octoller.BotBox.Web.ViewModels;
 using System.Threading.Tasks;
 using System.Linq;
@@ -10,8 +9,10 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using Octoller.BotBox.Web.Kernel.Services;
 using Octoller.BotBox.Web.Kernel;
+using Octoller.BotBox.Web.Data.Models;
+using AutoMapper;
 
-namespace Octoller.BotBox.Web.Controllers 
+namespace Octoller.BotBox.Web.Controllers
 {
     public class AccountController : Controller 
     {
@@ -19,16 +20,19 @@ namespace Octoller.BotBox.Web.Controllers
         private readonly SignInManager<User> signInManager;
         private readonly VkProviderProcessor vkProvider;
         private readonly ILogger<AccountController> logger;
+        private readonly IMapper mapper;
 
         public AccountController(UserManager<User> userManager,
             SignInManager<User> signInManager,
             VkProviderProcessor vkProvider,
-            ILogger<AccountController> logger) 
+            ILogger<AccountController> logger,
+            IMapper mapper) 
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.vkProvider = vkProvider;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]

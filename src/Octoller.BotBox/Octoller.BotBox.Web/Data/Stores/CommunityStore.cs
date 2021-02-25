@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Octoller.BotBox.Web.Data.Models;
 using Octoller.BotBox.Web.Data.Stores.Base;
-using Octoller.BotBox.Web.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

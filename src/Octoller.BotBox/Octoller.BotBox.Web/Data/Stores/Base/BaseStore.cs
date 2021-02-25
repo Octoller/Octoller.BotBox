@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Octoller.BotBox.Web.Models.Abstraction;
+using Octoller.BotBox.Web.Data.Models.Abstraction;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

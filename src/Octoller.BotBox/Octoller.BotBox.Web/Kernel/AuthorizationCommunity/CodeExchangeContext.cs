@@ -1,4 +1,4 @@
-﻿namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+﻿namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
     /// Содержит информацию, используемую для обмена кодом.

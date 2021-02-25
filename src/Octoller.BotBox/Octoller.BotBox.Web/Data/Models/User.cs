@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Octoller.BotBox.Web.Models.Abstraction;
+using Octoller.BotBox.Web.Data.Models.Abstraction;
 using System;
 using System.Collections.Generic;
 
-namespace Octoller.BotBox.Web.Models 
+namespace Octoller.BotBox.Web.Data.Models 
 {
     public class User : IdentityUser, IIdentity, IAuditable
     {

@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     public class TokenResponseAuthCommunity 
     {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     public class PostConfigureOptionsAuthCommunity : IPostConfigureOptions<OptionsAuthCommunity> 
     {

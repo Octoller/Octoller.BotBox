@@ -6,11 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Octoller.BotBox.Web.Kernel;
-using Octoller.BotBox.Web.Models;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
 using System;
+using Octoller.BotBox.Web.Data.Models;
 
 namespace Octoller.BotBox.Web.Data
 {

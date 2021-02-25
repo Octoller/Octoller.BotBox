@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
     /// Контракт на защиту данных

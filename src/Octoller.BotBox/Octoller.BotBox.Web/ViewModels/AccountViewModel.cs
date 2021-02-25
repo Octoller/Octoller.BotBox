@@ -1,6 +1,6 @@
 ﻿namespace Octoller.BotBox.Web.ViewModels
 {
-    public class ProfileViewModel 
+    public class AccountViewModel 
     {
         public bool IsAccountConnected {get; set;}
 

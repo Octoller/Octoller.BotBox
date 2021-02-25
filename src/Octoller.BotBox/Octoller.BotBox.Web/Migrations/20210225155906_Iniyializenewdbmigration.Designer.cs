@@ -10,8 +10,8 @@ using Octoller.BotBox.Web.Data;
 namespace Octoller.BotBox.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210222082913_regru_migration")]
-    partial class regru_migration
+    [Migration("20210225155906_Iniyializenewdbmigration")]
+    partial class Iniyializenewdbmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -152,7 +152,7 @@ namespace Octoller.BotBox.Web.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Octoller.BotBox.Web.Models.Account", b =>
+            modelBuilder.Entity("Octoller.BotBox.Web.Data.Models.Account", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -162,13 +162,13 @@ namespace Octoller.BotBox.Web.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -178,10 +178,10 @@ namespace Octoller.BotBox.Web.Migrations
                     b.Property<byte[]>("Photo")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<DateTime?>("UpdateAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdateBy")
+                    b.Property<string>("UpdatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -206,7 +206,7 @@ namespace Octoller.BotBox.Web.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("Octoller.BotBox.Web.Models.Community", b =>
+            modelBuilder.Entity("Octoller.BotBox.Web.Data.Models.Community", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -219,13 +219,13 @@ namespace Octoller.BotBox.Web.Migrations
                     b.Property<bool>("Connected")
                         .HasColumnType("bit");
 
-                    b.Property<string>("CreateBy")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -238,10 +238,10 @@ namespace Octoller.BotBox.Web.Migrations
                     b.Property<string>("TemplateBot")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdateAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdateBy")
+                    b.Property<string>("UpdatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -264,7 +264,7 @@ namespace Octoller.BotBox.Web.Migrations
                     b.ToTable("Communities");
                 });
 
-            modelBuilder.Entity("Octoller.BotBox.Web.Models.User", b =>
+            modelBuilder.Entity("Octoller.BotBox.Web.Data.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -274,6 +274,12 @@ namespace Octoller.BotBox.Web.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -312,6 +318,12 @@ namespace Octoller.BotBox.Web.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -340,7 +352,7 @@ namespace Octoller.BotBox.Web.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Octoller.BotBox.Web.Models.User", null)
+                    b.HasOne("Octoller.BotBox.Web.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -349,7 +361,7 @@ namespace Octoller.BotBox.Web.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Octoller.BotBox.Web.Models.User", null)
+                    b.HasOne("Octoller.BotBox.Web.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -364,7 +376,7 @@ namespace Octoller.BotBox.Web.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Octoller.BotBox.Web.Models.User", null)
+                    b.HasOne("Octoller.BotBox.Web.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -373,32 +385,32 @@ namespace Octoller.BotBox.Web.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Octoller.BotBox.Web.Models.User", null)
+                    b.HasOne("Octoller.BotBox.Web.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Octoller.BotBox.Web.Models.Account", b =>
+            modelBuilder.Entity("Octoller.BotBox.Web.Data.Models.Account", b =>
                 {
-                    b.HasOne("Octoller.BotBox.Web.Models.User", "User")
+                    b.HasOne("Octoller.BotBox.Web.Data.Models.User", "User")
                         .WithOne("Account")
-                        .HasForeignKey("Octoller.BotBox.Web.Models.Account", "UserId");
+                        .HasForeignKey("Octoller.BotBox.Web.Data.Models.Account", "UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Octoller.BotBox.Web.Models.Community", b =>
+            modelBuilder.Entity("Octoller.BotBox.Web.Data.Models.Community", b =>
                 {
-                    b.HasOne("Octoller.BotBox.Web.Models.User", "User")
+                    b.HasOne("Octoller.BotBox.Web.Data.Models.User", "User")
                         .WithMany("Communities")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Octoller.BotBox.Web.Models.User", b =>
+            modelBuilder.Entity("Octoller.BotBox.Web.Data.Models.User", b =>
                 {
                     b.Navigation("Account");
 

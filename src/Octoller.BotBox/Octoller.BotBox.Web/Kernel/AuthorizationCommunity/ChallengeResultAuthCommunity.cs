@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
-    /// <see cref="IActionResult"/> при выполнении вызывающий <see cref="Octoller.BotBox.Web.Kernel.AuthenticationCommunity.HandlerAuthCommunity.HandleChalengeAsync"/>
+    /// <see cref="IActionResult"/> при выполнении вызывающий <see cref="AuthorizationCommunity.HandlerAuthCommunity.HandleChalengeAsync"/>
     /// </summary>
     public class ChallengeResultAuthCommunity : IActionResult 
     {

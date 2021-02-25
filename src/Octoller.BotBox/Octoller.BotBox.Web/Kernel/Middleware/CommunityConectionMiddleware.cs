@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Octoller.BotBox.Web.Kernel.AuthenticationCommunity;
+using Octoller.BotBox.Web.Kernel.AuthorizationCommunity;
 using System.Threading.Tasks;
 
 namespace Octoller.BotBox.Web.Kernel.Middleware 

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     public class AuthCommunityEvents 
     {

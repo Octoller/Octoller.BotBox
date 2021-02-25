@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Octoller.BotBox.Web.Kernel.Services;
-using Octoller.BotBox.Web.Models;
 using Octoller.BotBox.Web.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Octoller.BotBox.Web.Kernel.AuthenticationCommunity;
+using Octoller.BotBox.Web.Kernel.AuthorizationCommunity;
+using Octoller.BotBox.Web.Data.Models;
+using AutoMapper;
 
-namespace Octoller.BotBox.Web.Controllers 
+namespace Octoller.BotBox.Web.Controllers
 {
     public class CommunityController : Controller 
     {
@@ -17,16 +18,19 @@ namespace Octoller.BotBox.Web.Controllers
         private readonly SignInManager<User> signInManager;
         private readonly VkProviderProcessor vkProvider;
         private readonly ILogger<ProfileController> logger;
+        private readonly IMapper mapper;
 
         public CommunityController(UserManager<User> userManager,
             SignInManager<User> signInManager,
             VkProviderProcessor vkProvider,
-            ILogger<ProfileController> logger) 
+            ILogger<ProfileController> logger,
+            IMapper mapper) 
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.vkProvider = vkProvider;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -36,28 +40,28 @@ namespace Octoller.BotBox.Web.Controllers
         {
             User user = await this.userManager.FindByNameAsync(User.Identity.Name);
 
-            IEnumerable<CommunityViewModel> communities = vkProvider.GetCommunity(user.Id,
-                    c => new CommunityViewModel 
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        Photo = c.Photo,
-                        Connected = c.Connected
-                    });
+            var communities = vkProvider.GetCommunity(user.Id);
+            var communityViewModels = new List<CommunityViewModel>();
+            
+            foreach(var community in communities)
+            {
+                var c = mapper.Map<CommunityViewModel>(community);
+                communityViewModels.Add(c);
+            }
 
-            return View(communities);
+            return View(communityViewModels);
         }
 
         [HttpPost]
         [Authorize(Policy = "Users")]
-        public async Task<IActionResult> LinkCommunity(string id) 
+        public async Task<IActionResult> AuthorizeCommunity(string id) 
         {
             if (id is null) 
             {
                 return RedirectToAction("Index");
             }
 
-            string redirectUri = Url.Action("LinkCommunityCallback", "Community");
+            string redirectUri = Url.Action("AuthorizeCommunityCallback", "Community");
 
             PropertiesAuthCommunity properties = await this.vkProvider
                 .GetRequestUrlForAuthorizeCommunityAsync(id, redirectUri);
@@ -71,8 +75,15 @@ namespace Octoller.BotBox.Web.Controllers
             return AuthCommunityChallenge(properties);
         }
 
+        //public async Task<IActionResult> UnAuthorizeCommunity(string id)
+        //{
+        //    if (id is null)
+        //    {
+        //        return RedirectToAction("Index");
+        //    }
+        //}
 
-        public IActionResult LinkCommunityCallback() 
+        public IActionResult AuthorizeCommunityCallback() 
         {
             return RedirectToAction("Index", "Community");
         }

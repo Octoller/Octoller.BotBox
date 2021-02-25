@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Octoller.BotBox.Web.Data.Models;
 using Octoller.BotBox.Web.Kernel.Services;
-using Octoller.BotBox.Web.Models;
 using Octoller.BotBox.Web.ViewModels;
 using System.Threading.Tasks;
 
-namespace Octoller.BotBox.Web.Controllers 
+namespace Octoller.BotBox.Web.Controllers
 {
     public class ProfileController : Controller 
     {
@@ -16,16 +17,19 @@ namespace Octoller.BotBox.Web.Controllers
         private readonly SignInManager<User> signInManager;
         private readonly VkProviderProcessor vkProvider;
         private readonly ILogger<ProfileController> logger;
+        private readonly IMapper mapper;
 
         public ProfileController(UserManager<User> userManager,
             SignInManager<User> signInManager,
             VkProviderProcessor vkProvider,
-            ILogger<ProfileController> logger) 
+            ILogger<ProfileController> logger,
+            IMapper mapper) 
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.vkProvider = vkProvider;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -33,36 +37,28 @@ namespace Octoller.BotBox.Web.Controllers
         [Authorize(Policy = "Users")]
         public async Task<IActionResult> Index() 
         {
-            User user = await this.userManager
-                .FindByNameAsync(User.Identity.Name);
+            var user = await this.userManager.FindByNameAsync(User.Identity.Name);
 
-            if (user is null) 
+            if (user is null)
             {
                 ///TODO: лог ошибки
                 RedirectToAction("Index", "Home");
             }
 
-            ProfileViewModel profile = await this.vkProvider
-                .FindAccounByUserIdAsync(user.Id, acc =>
-                    new ProfileViewModel 
-                    {
-                        Name = acc.Name,
-                        Avatar = acc.Photo,
-                        CountTemplate = 0,
-                        CommunityConnectedCount = 0,
-                        IsAccountConnected = true
-                    });
+            var account = await this.vkProvider.FindAccounByUserIdAsync(user.Id);
 
-            if (profile is null) 
+            if (account is null) 
             {
-                return View(new ProfileViewModel 
+                return View(new AccountViewModel 
                 {
                     Name = User.Identity.Name,
                     IsAccountConnected = false
                 });
             }
 
-            return View(profile);
+            var accountViewModel = mapper.Map<AccountViewModel>(account);
+
+            return View(accountViewModel);
         }
 
         [HttpGet]

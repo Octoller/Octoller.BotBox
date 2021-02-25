@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Octoller.BotBox.Web.Data.Models;
 using Octoller.BotBox.Web.Data.Stores;
-using Octoller.BotBox.Web.Kernel.AuthenticationCommunity;
+using Octoller.BotBox.Web.Kernel.AuthorizationCommunity;
 using Octoller.BotBox.Web.Logging;
-using Octoller.BotBox.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using VkNet.Model;
 using VkNet.Model.RequestParams;
 using VkNet.Utils;
 
-namespace Octoller.BotBox.Web.Kernel.Services 
+namespace Octoller.BotBox.Web.Kernel.Services
 {
     public class VkProviderProcessor 
     {
@@ -24,13 +24,13 @@ namespace Octoller.BotBox.Web.Kernel.Services
         private readonly ILogger<VkProviderProcessor> logger;
         private readonly AccountStore accountStore;
         private readonly CommunityStore communityStore;
-        private readonly UserManager<Models.User> userManager;
+        private readonly UserManager<Data.Models.User> userManager;
 
         public VkProviderProcessor(
             ILogger<VkProviderProcessor> logger,
             CommunityStore communityStore,
             AccountStore accountStore,
-            UserManager<Models.User> userManager) 
+            UserManager<Data.Models.User> userManager) 
         {
             this.logger = logger;
             this.accountStore = accountStore;
@@ -46,16 +46,16 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <param name="userId">Id пользователя</param>
         /// <param name="cast">Метод преобразования</param>
         /// <returns>Набор данных пользователя</returns>
-        public async Task<TVkData> FindAccounByUserIdAsync<TVkData>(string userId, System.Func<Account, TVkData> cast) 
+        public async Task<Account> FindAccounByUserIdAsync(string userId) 
         {
             Account vkAccount = await accountStore.GetByUserIdAsync(userId);
 
             if (vkAccount is null)
             {
-                return default(TVkData);
+                return default(Account);
             }
                 
-            return cast(vkAccount);
+            return vkAccount;
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <returns>Результат выполнения операции</returns>
         public async Task<IdentityResult> CreateVkAccountAsync(string userId, string email, ExternalLoginInfo loginInfo) 
         {
-            if (await FindAccounByUserIdAsync(userId, a => a.Id) != null) 
+            if ((await FindAccounByUserIdAsync(userId))?.Id != null) 
             {
                 return IdentityResult.Success;
             }
@@ -145,16 +145,16 @@ namespace Octoller.BotBox.Web.Kernel.Services
         /// <param name="userId">Id пользователя</param>
         /// <param name="cast">Метод преобразования</param>
         /// <returns>Коллекция сообществ</returns>
-        public IEnumerable<TElement> GetCommunity<TElement>(string userId, System.Func<Community, TElement> cast) 
+        public IEnumerable<Community> GetCommunity(string userId) 
         {
             var groups = communityStore.GetByUserId(userId);
-            var listResult = new List<TElement>();
+            var listResult = new List<Community>();
 
             if (groups.Any()) 
             {
                 foreach (var g in groups) 
                 {
-                    listResult.Add(cast(g));
+                    listResult.Add(g);
                 }
             }
 

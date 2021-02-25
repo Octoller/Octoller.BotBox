@@ -1,23 +1,13 @@
-﻿using Octoller.BotBox.Web.Models.Abstraction;
+﻿using Octoller.BotBox.Web.Data.Models.Abstraction;
 using System;
 
-namespace Octoller.BotBox.Web.Models
+namespace Octoller.BotBox.Web.Data.Models
 {
-    public class Community : IIdentity, IAuditable
+    public class Account : IIdentity, IAuditable
     {
         ///<inheritdoc />
         public string Id { get; set; }
-
-        /// <summary>
-        /// Указывает, является ли сообщество подключенным
-        /// </summary>
-        public bool Connected { get; set; }
-
-        /// <summary>
-        /// Подключенный шаблон бота
-        /// </summary>
-        public string TemplateBot { get; set; }
-
+        
         /// <summary>
         /// Id пользователя
         /// </summary>

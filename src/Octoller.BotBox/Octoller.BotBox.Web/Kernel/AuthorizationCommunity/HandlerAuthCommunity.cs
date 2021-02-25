@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
     /// Обработчик аутентификации сообщества ВК
@@ -87,7 +87,7 @@ namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity
                 ///TODO: обработка в случае ошибок
             }
 
-            await context.CommunityAuthentication(tiket);
+            await context.CommunityAuthorization(tiket);
 
             if (string.IsNullOrEmpty(properties.RedirectUri))
             {

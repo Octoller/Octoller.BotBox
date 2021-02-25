@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Octoller.BotBox.Web.Data.Stores;
 using Octoller.BotBox.Web.Kernel;
-using Octoller.BotBox.Web.Kernel.AuthenticationCommunity;
+using Octoller.BotBox.Web.Kernel.AuthorizationCommunity;
 using Octoller.BotBox.Web.Kernel.Extension;
 using Octoller.BotBox.Web.Kernel.Middleware;
 using Octoller.BotBox.Web.Kernel.Services;
@@ -39,7 +39,7 @@ namespace Octoller.BotBox.Web
             });
 
             //настройка identity
-            services.AddIdentity<Models.User, IdentityRole>(options => 
+            services.AddIdentity<Data.Models.User, IdentityRole>(options => 
             {
                 options.Password.RequiredLength = 6;
                 options.Password.RequireNonAlphanumeric = false;
@@ -67,6 +67,8 @@ namespace Octoller.BotBox.Web
                     policy.RequireRole(AppData.RolesData.AdministratorRoleName);
                 });
             });
+
+            services.AddAutoMapper(this.GetType().Assembly);
 
             services.AddTransient<AccountStore>()
                 .AddTransient<CommunityStore>()
@@ -123,6 +125,8 @@ namespace Octoller.BotBox.Web
             options.Scope.Add("offline");
             options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "user_id");
             options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+            options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "first_name");
+            options.ClaimActions.MapJsonKey(ClaimTypes.Surname, "last_name");
             options.SaveTokens = true;
 
             options.Events = new OAuthEvents 

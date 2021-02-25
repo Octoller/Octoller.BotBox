@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
     /// Предоставляет результат вызова аутентификации

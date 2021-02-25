@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
     /// Сереализатор свойств подключения джля получения доступа к управлению сообществами

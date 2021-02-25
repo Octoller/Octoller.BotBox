@@ -2,7 +2,7 @@
 using System.Linq;
 using System;
 
-namespace Octoller.BotBox.Web.Kernel.AuthenticationCommunity 
+namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 {
     /// <summary>
     /// Словарь для хранения значений состояния аутентификации сообщества.

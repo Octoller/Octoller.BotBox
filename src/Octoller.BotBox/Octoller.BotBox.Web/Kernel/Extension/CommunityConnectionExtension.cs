@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Octoller.BotBox.Web.Kernel.AuthenticationCommunity;
+using Octoller.BotBox.Web.Kernel.AuthorizationCommunity;
 
 namespace Octoller.BotBox.Web.Kernel.Extension {
 
