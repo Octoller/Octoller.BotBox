@@ -74,13 +74,15 @@ namespace Octoller.BotBox.Web.Controllers
             return AuthCommunityChallenge(properties);
         }
 
-        //public async Task<IActionResult> UnAuthorizeCommunity(string id)
-        //{
-        //    if (id is null)
-        //    {
-        //        return RedirectToAction("Index");
-        //    }
-        //}
+        public async Task<IActionResult> UnAuthorizeCommunity(string id)
+        {
+           if (!string.IsNullOrEmpty(id))
+            {
+                await vkProvider.CommunityUnAuthorizationAsync(id);
+            }
+
+            return RedirectToAction("Index");
+        }
 
         public IActionResult AuthorizeCommunityCallback() 
         {

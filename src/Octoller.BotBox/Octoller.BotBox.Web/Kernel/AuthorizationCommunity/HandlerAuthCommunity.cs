@@ -120,12 +120,12 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
 
                 if (string.Equals(error, "access_denied")) 
                 {
-                    ///TODO: обработка в случае ошибки доступа
-                    //var result = await HandleAccessDeniedErrorAsync(properties);
 
-                    //if (!result.None) {
-                    //    return result;
-                    //}
+                    var result = HandleAccessDeniedError(properties);
+
+                    if (!result.Skippeded) {
+                        return result;
+                    }
 
                     var deniedExeption = new Exception("Доступ был запрещен владельцем ресурса или удаленным сервером.");
 
@@ -228,6 +228,33 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
                 challengeUrl: authCommunityEndpoint);
 
            await Events.RedirectToAuthorizationEndpoint(redirectContext);
+        }
+
+        private ResultAuthCommunity HandleAccessDeniedError(PropertiesAuthCommunity properties)
+        {
+            ///TODO: запись в лог
+            
+            if (options.AccessDeniedPath.HasValue)
+            {
+                var uri = options.AccessDeniedPath.Value;
+
+                if (!string.IsNullOrEmpty(properties.RedirectUri))
+                {
+                    uri = QueryHelpers.AddQueryString(uri, "RedirectUri", properties.RedirectUri);
+                }
+
+                Response.Redirect(BuildRedirectUri(uri));
+                
+                return ResultAuthCommunity.Handled();
+            } 
+
+            if (!string.IsNullOrEmpty(properties.RedirectUri))
+            {
+                Response.Redirect(BuildRedirectUri(properties.RedirectUri));
+                return ResultAuthCommunity.Handled();
+            }
+
+            return ResultAuthCommunity.Skipped();
         }
 
         private string BuildChallengeUrl(PropertiesAuthCommunity properties, string redirectUri) 

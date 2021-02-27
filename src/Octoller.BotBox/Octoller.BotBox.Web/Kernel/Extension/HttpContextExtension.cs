@@ -10,7 +10,7 @@ namespace Octoller.BotBox.Web.Kernel.Extension
     {
         public static async Task CommunityAuthorization(this HttpContext context, TicketAuthCommunity tiket)
         {
-           await context.RequestServices.GetRequiredService<VkProviderProcessor>().CommunityAuthenticateAsync(tiket);
+           await context.RequestServices.GetRequiredService<VkProviderProcessor>().CommunityAuthorizationAsync(tiket);
         }
     }
 }

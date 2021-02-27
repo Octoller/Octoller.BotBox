@@ -4,17 +4,16 @@ using Octoller.BotBox.Web.Data.Models;
 using Octoller.BotBox.Web.Data.Stores;
 using Octoller.BotBox.Web.Kernel.AuthorizationCommunity;
 using Octoller.BotBox.Web.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using VkNet;
 using VkNet.Abstractions;
 using VkNet.Enums.Filters;
-using VkNet.Model;
 using VkNet.Model.RequestParams;
-using VkNet.Utils;
+using VkNet.Model;
+using System.Linq;
+using System;
+using VkNet;
 
 namespace Octoller.BotBox.Web.Kernel.Services
 {
@@ -178,14 +177,19 @@ namespace Octoller.BotBox.Web.Kernel.Services
             };
         }
 
-        public async Task CommunityAuthenticateAsync(TicketAuthCommunity tiket) 
+        /// <summary>
+        /// Производит аутентификацию сообщества по ключу аутентификации
+        /// </summary>
+        /// <param name="tiket"></param>
+        /// <returns></returns>
+        public async Task CommunityAuthorizationAsync(TicketAuthCommunity tiket) 
         {
             if (tiket is null)
             {
                 ///TODO: Запись ошибки в лог
-                await Task.CompletedTask;
+                return;
             }
-
+            
             foreach (var token in tiket.StoreToken.Tokens)
             {
                var community = communityStore.Communities
@@ -205,6 +209,33 @@ namespace Octoller.BotBox.Web.Kernel.Services
             await Task.CompletedTask;
         }
 
+        public async Task CommunityUnAuthorizationAsync(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                ///TODO: лог ошибки
+                return;
+            }
+
+            var community = await communityStore.GetByIdAsync(id);
+
+            if (community is null)
+            {
+                ///TODO: лог ошибки
+                return;
+            }
+
+            community.AccessToken = null;
+            community.Connected = false;
+
+            var result = await communityStore.UpdateAsync(community);
+
+            if (!result)
+            {
+                ///TODO: лог ошибки
+                return;
+            }
+        }
 
         private static IdentityResult FailedResult(string description) 
         {

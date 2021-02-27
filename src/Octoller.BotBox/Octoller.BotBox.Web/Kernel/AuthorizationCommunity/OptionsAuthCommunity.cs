@@ -57,6 +57,11 @@ namespace Octoller.BotBox.Web.Kernel.AuthorizationCommunity
         public DataProtectorAuthComunnity StateDataFormat { get; set; }
 
         /// <summary>
+        /// Возвращает или задает URl, на который будет перенапрален пользователь в случае запрета доступа к аутентификации
+        /// </summary>
+        public PathString AccessDeniedPath { get; set; }
+
+        /// <summary>
         /// Проверяет, что параметры действительны и заданы. 
         /// Если это не так, вызывает исключение.
         /// </summary>
