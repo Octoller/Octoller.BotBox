@@ -12,7 +12,7 @@ namespace Octoller.BotBox.Web.Kernel.Extension {
 
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<OptionsAuthCommunity>, PostConfigureOptionsAuthCommunity>());
 
-            void СofigureOptions(OptionsAuthCommunity options) {
+            void СonfigureOptions(OptionsAuthCommunity options) {
                 options.ClientId = configuration["VkOptionsData:ClientId"];
                 options.ClientSecret = configuration["VkOptionsData:ClientSecret"];
                 options.CallbackPath = new Microsoft.AspNetCore.Http.PathString(configuration["VkOptionsData:CallbackPathCommunity"]);
@@ -26,7 +26,7 @@ namespace Octoller.BotBox.Web.Kernel.Extension {
             }
 
             services.AddOptions<OptionsAuthCommunity>()
-                .Configure(СofigureOptions)
+                .Configure(СonfigureOptions)
                 .Validate(o => {
                     o.Validate();
                     return true;

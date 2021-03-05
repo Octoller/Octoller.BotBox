@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using Octoller.BotBox.Web.ViewModels;
 using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.AspNetCore.Authentication;
-using System.Collections.Generic;
 using System.Security.Claims;
 using Octoller.BotBox.Web.Kernel.Services;
 using Octoller.BotBox.Web.Kernel;

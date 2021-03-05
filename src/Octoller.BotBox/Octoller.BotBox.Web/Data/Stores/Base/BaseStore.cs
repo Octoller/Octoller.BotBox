@@ -31,7 +31,7 @@ namespace Octoller.BotBox.Web.Data.Stores.Base
             {
                 if (entry.Entity is not IAuditable)
                 {
-                   await Task.CompletedTask;
+                    continue;
                 }
 
                 var createdBy = entry.Property(nameof(IAuditable.CreatedBy)).CurrentValue;
